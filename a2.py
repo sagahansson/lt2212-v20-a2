@@ -16,23 +16,17 @@ def part1(samples):
     print("Data shape: ", X.shape)
     return X
 
+def tokenize_to_list(onesample):
+    # creates lists of words that are lowercase and alphabetiacl 
+    lower = onesample.lower()
+    word_strings = lower.split()
+    only_alpha = [word for word in word_strings if word.isalpha()]
+    return only_alpha
+
 
 def extract_features(samples):
     print("Extracting features ...")
-    allfiles = []
-    onefile = []
-    allwords = []
-    
-    for file in newsdata:
-    onefile = []
-    lowerfile = file.lower()
-    newfile = lowerfile.split()
-    for w in newfile:
-        if w.isalpha():
-            onefile.append(w)
-            
-    allwords.append(w)
-    allfiles.append((collections.Counter(onefile)))
+
     
     
     #pass #Fill this in
