@@ -19,7 +19,23 @@ def part1(samples):
 
 def extract_features(samples):
     print("Extracting features ...")
-    pass #Fill this in
+    allfiles = []
+    onefile = []
+    allwords = []
+    
+    for file in newsdata:
+    onefile = []
+    lowerfile = file.lower()
+    newfile = lowerfile.split()
+    for w in newfile:
+        if w.isalpha():
+            onefile.append(w)
+            
+    allwords.append(w)
+    allfiles.append((collections.Counter(onefile)))
+    
+    
+    #pass #Fill this in
 
 
 
