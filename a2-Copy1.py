@@ -3,6 +3,9 @@ import random
 from sklearn.datasets import fetch_20newsgroups
 from sklearn.base import is_classifier
 import numpy as np
+from nltk.corpus import stopwords
+import collections
+stopwords = stopwords.words('english')
 random.seed(42)
 
 
@@ -20,7 +23,7 @@ def tokenize_to_list(onesample):
     # creates lists of words that are lowercase and alphabetiacl 
     lower = onesample.lower()
     word_strings = lower.split()
-    only_alpha = [word for word in word_strings if word.isalpha()]
+    only_alpha = [word for word in word_strings if word.isalpha() and word not in stopwords]
     return only_alpha
 
 def word_count(alist, words, index_dict):
@@ -32,9 +35,6 @@ def word_count(alist, words, index_dict):
         i = index_dict[word]
         vector[i] = count_dict[word]
     return vector
-
-
-
 
 def extract_features(samples):
     print("Extracting features ...")
@@ -80,7 +80,9 @@ def part2(X, n_dim):
 
 def reduce_dim(X,n=10):
     #fill this in
-    pass
+    svd = TruncatedSVD(n_components=5, n_iter=7, random_state=42)
+    return svd.fit(X)
+
 
 
 
