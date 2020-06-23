@@ -5,6 +5,12 @@ from sklearn.base import is_classifier
 import numpy as np
 from nltk.corpus import stopwords
 import collections
+from sklearn.decomposition import TruncatedSVD
+from sklearn.model_selection import train_test_split
+import sklearn.metrics as metrics
+
+
+
 stopwords = stopwords.words('english')
 random.seed(42)
 
@@ -36,6 +42,8 @@ def word_count(alist, words, index_dict):
         vector[i] = count_dict[word]
     return vector
 
+
+
 def extract_features(samples):
     print("Extracting features ...")
     
@@ -60,8 +68,16 @@ def extract_features(samples):
     for sam in sample_list:
         big_array[sample_no] = word_count(sam, antal_words, word_idx) # call counter funktion som räknar ord i varje sample + lägger deras värden på rätt plats i rätt arr i nparray
         sample_no += 1
+    print('Features extracted.')
+    print('Number of words before filtering: ', big_array.shape[1]) 
+    
+    big_arr_sum = np.sum(big_array, axis =0)
+    array_filter = big_arr_sum > 10
+    filtered_arr = big_array[:, array_filter]
+    
+    print('Number of words after filtering: ', filtered_arr.shape[1])
         
-    return big_array
+    return filtered_arr
 
 
 
@@ -80,19 +96,32 @@ def part2(X, n_dim):
 
 def reduce_dim(X,n=10):
     #fill this in
-    svd = TruncatedSVD(n_components=5, n_iter=7, random_state=42)
-    return svd.fit(X)
+    svd = TruncatedSVD(n_components=n)
+    print('Fitting and transforming')
+    fit_transformed = svd.fit_transform(X)
+    return fit_transformed 
 
 
+from sklearn.tree import DecisionTreeClassifier # funkar ej
+from sklearn.svm import SVC # ok varför funkar ej? -- eller tar de bara stenlång tid+??
 
+from sklearn.naive_bayes import MultinomialNB # a funkar inte heller för i helvete hur jävla många ska jag gå igenom
+from sklearn.naive_bayes import GaussianNB # är skitdålig med dim reduct
+from sklearn.naive_bayes import BernoulliNB # är skitdålig generellt
+from sklearn.svm import LinearSVC # funkar men får varning 
 
 ##### PART 3
 #DONT CHANGE THIS FUNCTION EXCEPT WHERE INSTRUCTED
 def get_classifier(clf_id):
     if clf_id == 1:
-        clf = "" # <--- REPLACE THIS WITH A SKLEARN MODEL
+        #clf = MultinomialNB() # input X must be non-negative bla bla bla
+        #clf = GaussianNB() 
+        #clf = BernoulliNB()
+        clf = DecisionTreeClassifier()
     elif clf_id == 2:
-        clf = "" # <--- REPLACE THIS WITH A SKLEARN MODEL
+        clf = LinearSVC(max_iter=20000, dual=False) # ConvergenceWarning: Liblinear failed to converge, increase the number of iterations. "the number of iterations.", ConvergenceWarning) -- dual=False ska lösa detta?
+
+
     else:
         raise KeyError("No clf with id {}".format(clf_id))
 
@@ -128,29 +157,68 @@ def part3(X, y, clf_id):
 
 
 def shuffle_split(X,y):
-    pass # Fill in this
-
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    return X_train, X_test, y_train, y_test
 
 def train_classifer(clf, X, y):
     assert is_classifier(clf)
-    ## fill in this
-
+    clf.fit(X, y)
+    
 
 def evalute_classifier(clf, X, y):
     assert is_classifier(clf)
-    #Fill this in
-
+    pred = clf.predict(X)
+    acc = metrics.accuracy_score(y, pred)
+    prec = metrics.precision_score(y, pred, average='weighted')
+    rec = metrics.recall_score(y, pred, average='weighted')
+    f1 = metrics.f1_score(y, pred, average='weighted')
+    print('Accuracy: ', acc)
+    print('Precision: ', prec)
+    print('Recall: ', rec)
+    print('F1-measure: ', f1)
 
 ######
 #DONT CHANGE THIS FUNCTION
 def load_data():
     print("------------Loading Data-----------")
-    data = fetch_20newsgroups(subset='all', shuffle=True, random_state=42)
+    data = fetch_20newsgroups(subset='all', shuffle=True, random_state=42) # både shuffle & random_state ärla default 
     print("Example data sample:\n\n", data.data[0])
     print("Example label id: ", data.target[0])
     print("Example label name: ", data.target_names[data.target[0]])
     print("Number of possible labels: ", len(data.target_names))
     return data.data, data.target, data.target_names
+
+### TIMER
+import atexit
+from time import time, strftime, localtime
+from datetime import timedelta
+
+def secondsToStr(elapsed=None):
+    if elapsed is None:
+        return strftime("%Y-%m-%d %H:%M:%S", localtime())
+    else:
+        return str(timedelta(seconds=elapsed))
+
+def log(s, elapsed=None):
+    line = "="*40
+    print(line)
+    print(secondsToStr(), '-', s)
+    if elapsed:
+        print("Elapsed time:", elapsed)
+    print(line)
+    print()
+
+def endlog():
+    end = time()
+    elapsed = end-start
+    log("End Program", secondsToStr(elapsed))
+
+start = time()
+atexit.register(endlog)
+log("Start Program")
+### timer end
+
 
 
 #DONT CHANGE THIS FUNCTION
