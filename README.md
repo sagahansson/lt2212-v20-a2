@@ -14,6 +14,7 @@ I find it interesting that both classifiers handled the dimensions of the featur
 
 
 | Features       | Decision Tree Classifier  | Gaussian Naïve Bayes      | 
+|----------------|---------------------------|---------------------------| 
 | -------------  | A ---- P ---- R ---- F1   | A ---- P ---- R ---- F1   | 
 | 100% - 14660   | 0.63 - 0.63 - 0.63 - 0.63 | 0.77 - 0.77 - 0.77 - 0.77 | 
 | 50%  - 7330    | 0.30 - 0.30 - 0.30 - 0.30 | 0.13 - 0.30 - 0.13 - 0.11 |
