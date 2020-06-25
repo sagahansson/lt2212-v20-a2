@@ -36,7 +36,8 @@ def tokenize_to_list(onesample):
     return only_alpha
 
 def word_count(alist, no_of_words, index_dict):
-    #puts counts instead of zeroes in np.zeros
+    # produces word counts for a doc, puts counts in the right place in a vector of the same length as the total number of unique words in all docs
+    # "the right place" = all wc for word "cat" are placed at the same index, independent of doc 
     count_dict = collections.Counter(alist)
     vector = np.zeros(no_of_words)
     
@@ -73,7 +74,7 @@ def extract_features(samples):
     print('Number of words before filtering: ', big_array.shape[1]) 
     
     big_arr_sum = np.sum(big_array, axis =0) # gets total word counts
-    array_filter = big_arr_sum > 10 # boolean filter
+    array_filter = big_arr_sum > 10 # boolean filter -- everything in big_array_sum that is over 10 gets True, everything else False
     filtered_arr = big_array[:, array_filter] # filters out words that occur less than 10 times in total
     
     print('Number of words after filtering: ', filtered_arr.shape[1])
@@ -177,37 +178,6 @@ def load_data():
     print("Example label name: ", data.target_names[data.target[0]])
     print("Number of possible labels: ", len(data.target_names))
     return data.data, data.target, data.target_names
-
-### TIMER
-import atexit
-from time import time, strftime, localtime
-from datetime import timedelta
-
-def secondsToStr(elapsed=None):
-    if elapsed is None:
-        return strftime("%Y-%m-%d %H:%M:%S", localtime())
-    else:
-        return str(timedelta(seconds=elapsed))
-
-def log(s, elapsed=None):
-    line = "="*40
-    print(line)
-    print(secondsToStr(), '-', s)
-    if elapsed:
-        print("Elapsed time:", elapsed)
-    print(line)
-    print()
-
-def endlog():
-    end = time()
-    elapsed = end-start
-    log("End Program", secondsToStr(elapsed))
-
-start = time()
-atexit.register(endlog)
-log("Start Program")
-### timer end
-
 
 
 #DONT CHANGE THIS FUNCTION
