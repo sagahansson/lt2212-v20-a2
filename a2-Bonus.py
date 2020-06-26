@@ -1,4 +1,4 @@
-## orginal med svd dim reduction
+## pca dim reduction
 
 import argparse
 import random
@@ -7,7 +7,8 @@ from sklearn.base import is_classifier
 import numpy as np
 from nltk.corpus import stopwords
 import collections
-from sklearn.decomposition import TruncatedSVD
+#from sklearn.decomposition import TruncatedSVD
+from sklearn.decomposition import PCA
 from sklearn.model_selection import train_test_split
 import sklearn.metrics as metrics
 #from sklearn.svm import LinearSVC
@@ -97,11 +98,12 @@ def part2(X, n_dim):
     return X_dr
 
 
-def reduce_dim(X,n=10):
-    svd = TruncatedSVD(n_components=n)
+def reduce_dim(X,n=10):  
+    pca = PCA(n_components=n)
     print('Fitting and transforming')
-    fit_transformed = svd.fit_transform(X)
+    fit_transformed = pca.fit_transform(X)
     return fit_transformed 
+
 
 
 ##### PART 3
@@ -111,8 +113,6 @@ def get_classifier(clf_id):
         clf = DecisionTreeClassifier()
     elif clf_id == 2:
         clf = GaussianNB()
-
-
     else:
         raise KeyError("No clf with id {}".format(clf_id))
 
@@ -180,7 +180,6 @@ def load_data():
     print("Number of possible labels: ", len(data.target_names))
     return data.data, data.target, data.target_names
 
-
 #DONT CHANGE THIS FUNCTION
 def main(model_id=None, n_dim=False):
 
@@ -202,8 +201,7 @@ def main(model_id=None, n_dim=False):
         print("\n------------PART 3-----------")
         part3(X, labels, model_id)
 
-
-
+        
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-n_dim",
